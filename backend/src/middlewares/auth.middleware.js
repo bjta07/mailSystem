@@ -59,7 +59,7 @@ export const verifyAdmin = (req, res, next) => {
         })
     }
 
-    if (req.role === '1') {
+    if (req.role === 1) {
         return next()
     }
 
@@ -78,7 +78,7 @@ export const verifyUserOrAdmin = (req, res, next) => {
         })
     }
 
-    if (req.role === '2' || req.role === '1') {
+    if (req.role === 2 || req.role === 1) {
         return next()
     }
     return res.status(403).json({
@@ -96,7 +96,7 @@ export const verifyUser = (req, res, next) => {
         })
     }
 
-    if (req.role === '2' || req.role === '1'){
+    if (req.role === 2 || req.role === 1){
         return next()
     }
     return res.status(403).json({
@@ -115,7 +115,7 @@ export const verifyOwner = (req, res, next) => {
     }
     const { uid } = req.params
 
-    if (req.uid === uid || req.role === '1') {
+    if (req.uid === uid || req.role === 1) {
         return next()
     }
 

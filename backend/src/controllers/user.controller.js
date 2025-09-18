@@ -231,6 +231,28 @@ const findAll = async (req, res) => {
     }
 }
 
+// actualizar usuario completo
+const updateUser = async (req, res) => {
+    try {
+        const { uid } = req.params
+        const { name, username, email, phone, ci, role, isActive } = req.body
+
+        const user = await UserModel.findOneByUid(uid)
+        if (!user) return res.status(404).json({ ok: false, msg: 'User not found' })
+
+        const updatedUser = await UserModel.updateUser(uid, { name, username, email, phone, ci, role, isActive })
+
+        return res.json({
+            ok: true,
+            data: updatedUser,
+            msg: 'User updated successfully'
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ ok: false, msg: 'Server error' })
+    }
+}
+
 export const UserController = {
     register,
     login,
@@ -238,5 +260,6 @@ export const UserController = {
     findAll,
     updateRole,
     updateUserStatus,
-    deleteUser
+    deleteUser,
+    updateUser
 }

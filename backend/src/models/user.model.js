@@ -56,7 +56,22 @@ const findAll = async () => {
         text: `SELECT uid, name, username, email, password, phone, ci, role, is_active as "isActive" FROM users ORDER BY created_at DESC`, 
     }
     const { rows } = await db.query(query)
-    return rows [0]
+    return rows
+}
+
+//Actualizar usuario
+const updateUser = async (uid, { name, username, email, phone, ci, role, isActive }) => {
+    const query = {
+        text: `
+            UPDATE users
+            SET name = $2, username = $3, email = $4, phone = $5, ci = $6, role = $7, is_active = $8, updated_at = CURRENT_TIMESTAMP
+            WHERE uid = $1
+            RETURNING uid, name, username, email, phone, ci, role, is_active as "isActive", updated_at
+        `,
+        values: [uid, name, username, email, phone, ci, role, isActive]
+    }
+    const { rows } = await db.query(query)
+    return rows[0]
 }
 
 //actualizar rol de usuario
@@ -190,5 +205,6 @@ export const UserModel = {
     updateProfile,
     updatePassword,
     checkUsernameExists,
-    checkEmailExists
+    checkEmailExists,
+    updateUser
 }

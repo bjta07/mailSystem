@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 import { UserController } from "../controllers/user.controller.js";
 import {
     verifyActiveToken,
@@ -13,17 +13,17 @@ router.post('/register', verifyActiveAdmin, UserController.register)
 router.get('/profile', verifyActiveToken, UserController.profile)
 
 //rutas solo Admin
-
 router.get('/',
-    (req, res, next) => {
-        console.log(req.headers.authorization ? 'Token presente': 'Sin token')
-        next()
-    }, verifyActiveAdmin, (req, res, next) => {
-        next()
-    }, UserController.findAll
+    verifyActiveAdmin,
+    UserController.findAll
 )
 
+// Ruta para actualizar un usuario
+router.put('/:uid', verifyActiveAdmin, UserController.updateUser)
+
+// Rutas específicas
 router.put('/:uid/role', verifyActiveAdmin, UserController.updateRole)
 router.put('/:uid/status', verifyActiveAdmin, UserController.updateUserStatus)
 router.delete('/:uid', verifyActiveAdmin, UserController.deleteUser)
+
 export default router
