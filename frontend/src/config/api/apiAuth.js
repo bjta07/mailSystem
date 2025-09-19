@@ -11,7 +11,6 @@ async function fetchApi(url, options = {}) {
         'Accept': 'application/json',
         ...(token && { Authorization: `Bearer ${token}` })
     };
-
     const apiUrl = `${API_HOST}/api/${url}`.replace(/([^:]\/)\/+/g, "$1");
     console.log('🚀 Fetching:', apiUrl); // Para debugging
 

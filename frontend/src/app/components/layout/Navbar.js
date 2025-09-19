@@ -5,32 +5,42 @@ import styles from '@/styles/Navbar.module.css'
 export default function Navbar(){
     const { user, logout } = useAuth()
 
-    // Define el prefijo de rutas según el rol
-    const basePath = user?.role === 1 ? "/admin" : "/user"
+    if (!user) return null // si no hay usuario autenticado, no muestra nada
+
+    const basePath = user.role === 1 ? "/admin" : "/users"
+
+    // enlaces de admin
+    const adminLinks = [
+        { href: `${basePath}`, label: "Dashboard" },
+        { href: `${basePath}/manageUsers`, label: "Modificar usuarios" },
+        { href: `${basePath}/createUser`, label: "Crear nuevo usuario" },
+        { href: `${basePath}/manageMail`, label: "Correspondencia" },
+        { href: `${basePath}/reports`, label: "Informes" }
+    ]
+
+    // enlaces de usuario
+    const userLinks = [
+        { href: `${basePath}`, label: "Dashboard" },
+        { href: `${basePath}/correspondencia`, label: "Crear correspondencia" },
+        { href: `${basePath}/seguimiento`, label: "Seguimiento" }
+    ]
+
+    const links = user.role === 1 ? adminLinks : userLinks
 
     return (
         <div className={styles.navContainer}>
             <nav className={styles.nav}>
                 <section className={styles.adminLinks}>
-                    <p>General</p>
+                    <p>{user.role === 1 ? "General (Admin)" : "General (Usuario)"}</p>
                     <ul className={styles.linkContainer}>
-                        <li className={styles.linkItem}>
-                            <Link href={`${basePath}`}>Dashboard</Link>
-                        </li>
-                        <li className={styles.linkItem}>
-                            <Link href={`${basePath}/manageUsers`}>Modificar usuarios</Link>
-                        </li>
-                        <li className={styles.linkItem}>
-                            <Link href={`${basePath}/createUser`}>Crear nuevo usuario</Link>
-                        </li>
-                        <li className={styles.linkItem}>
-                            <Link href={`${basePath}/manageMail`}>Correspondencia</Link>
-                        </li>
-                        <li className={styles.linkItem}>
-                            <Link href={`${basePath}/reports`}>Informes</Link>
-                        </li>
+                        {links.map(link => (
+                            <li key={link.href} className={styles.linkItem}>
+                                <Link href={link.href}>{link.label}</Link>
+                            </li>
+                        ))}
                     </ul>
                 </section>
+
                 <section className={styles.settings}>
                     <p>Administra tu Perfil</p>
                     <ul className={styles.linkContainer}>

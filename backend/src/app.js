@@ -3,7 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 
 import userRouter from './routes/user.routes.js'
-import authRoutes from './routes/auth.routes.js'
+import mailRouter from './routes/mail.routes.js'
 
 dotenv.config()
 
@@ -24,6 +24,7 @@ app.use(express.static('public'))
 // Rutas
 // Todas las rutas de autenticación y usuarios bajo /api/users
 app.use('/api/users', userRouter)
+app.use('/api/mail', mailRouter )
 
 // Middleware para manejo de errores
 app.use((err, req, res, next) => {
