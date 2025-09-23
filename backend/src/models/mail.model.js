@@ -10,15 +10,27 @@ const create = async ({
     estado_id = 1, // por defecto "Recepcionado"
     fecha_carta,
     fecha_recepcion,
-    cite
+    cite,
+    recepcionado_por
 }) => {
     const query = {
         text: `
             INSERT INTO correspondencia 
-            (hoja_ruta, referencia, procedencia_id, remitente, cargo_remitente, estado_id, fecha_carta, fecha_recepcion, cite)
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+            (hoja_ruta, referencia, procedencia_id, remitente, cargo_remitente, estado_id, fecha_carta, fecha_recepcion, cite, recepcionado_por)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, COALESCE($8, CURRENT_TIMESTAMP), $9, $10)
             RETURNING *`,
-        values: [hoja_ruta, referencia, procedencia_id, remitente, cargo_remitente, estado_id, fecha_carta, fecha_recepcion, cite]
+        values: [
+            hoja_ruta, 
+            referencia, 
+            parseInt(procedencia_id),  // Debe ser un ID válido de la tabla procedencia
+            remitente, 
+            cargo_remitente, 
+            estado_id || 1,            // 1 por defecto
+            fecha_carta, 
+            fecha_recepcion ?? null, 
+            cite, 
+            parseInt(recepcionado_por) // Aseguramos que sea número para la foreign key
+        ]
     }
     const { rows } = await db.query(query)
     return rows[0]
@@ -28,15 +40,31 @@ const create = async ({
 const findAll = async () => {
     const query = {
         text: `
-            SELECT c.*, p.nombre AS procedencia, e.nombre AS estado
+            SELECT 
+                c.id,
+                c.hoja_ruta,
+                c.referencia,
+                c.remitente,
+                c.cargo_remitente,
+                c.fecha_carta,
+                c.fecha_recepcion,
+                c.cite,
+                p.nombre AS procedencia,
+                e.nombre AS estado,
+                u.uid AS recepcionado_por_id,
+                u.name AS recepcionado_por_nombre,
+                u.username AS recepcionado_por_username
             FROM correspondencia c
             JOIN procedencia p ON c.procedencia_id = p.id
             JOIN estado e ON c.estado_id = e.id
-            ORDER BY c.fecha_recepcion DESC`
-    }
-    const { rows } = await db.query(query)
-    return rows
-}
+            JOIN users u ON c.recepcionado_por = u.uid
+            ORDER BY c.fecha_recepcion DESC
+        `
+    };
+    const { rows } = await db.query(query);
+    return rows;
+};
+
 
 // Obtener por id
 const findById = async (id) => {

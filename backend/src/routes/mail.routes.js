@@ -6,14 +6,16 @@ import { verifyActiveUserorAdmin, verifyActiveAdmin } from "../middlewares/auth.
 const router = Router()
 
 // Crear correspondencia → User o Admin
-router.post("/register", verifyActiveUserorAdmin, MailController.create)
+router.post("/", verifyActiveUserorAdmin, MailController.create)
 
 // Obtener todas / una → cualquier user autenticado
 router.get("/", verifyActiveUserorAdmin, MailController.getAll)
 router.get("/:id", verifyActiveUserorAdmin, MailController.getById)
 
-// Editar / Eliminar → solo Admin
-router.put("/:id", verifyActiveAdmin, MailController.update)
+// Actualizar → cualquier usuario autenticado
+router.put("/:id", verifyActiveUserorAdmin, MailController.update)
+
+// Eliminar → solo Admin
 router.delete("/:id", verifyActiveAdmin, MailController.remove)
 
 export default router

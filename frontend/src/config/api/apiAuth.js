@@ -102,3 +102,82 @@ export const authApi = {
         method: 'DELETE'
     })
 };
+
+export const mailApi = {
+    registerMail: async (mailData) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No hay sesión activa. Por favor, inicie sesión.');
+        }
+        return fetchApi('mail', {
+            method: 'POST',
+            body: JSON.stringify(mailData)
+        });
+    },
+
+    getAll: async () => {
+        try {
+            const response = await fetchApi('mail');
+            console.log('Respuesta de getAll:', response);
+            
+            // Asegurarse de que devolvemos un array
+            if (response && response.data) {
+                return {
+                    ok: true,
+                    data: Array.isArray(response.data) ? response.data : [response.data]
+                };
+            }
+            
+            // Si la respuesta es un array directamente
+            if (Array.isArray(response)) {
+                return {
+                    ok: true,
+                    data: response
+                };
+            }
+            
+            throw new Error('Formato de respuesta inválido');
+        } catch (error) {
+            console.error('Error en findAll:', error);
+            throw error;
+        }
+    },
+
+    getById: async (id) => {
+    try {
+        const response = await fetchApi(`mail/${id}`);
+        console.log('Respuesta de getById:', response);
+
+        if (response && response.data) {
+            return {
+                ok: true,
+                data: response.data
+            };
+        }
+
+        // Si la API devuelve directamente el objeto (no envuelto en { data })
+        if (response) {
+            return {
+                ok: true,
+                data: response
+            };
+        }
+
+        throw new Error('No se encontró correspondencia con ese ID');
+    } catch (error) {
+        console.error('Error en getById:', error);
+        throw error;
+    }
+},
+
+
+    updateMail: (mailId, mailData) => fetchApi(`mail/${mailId}`,{
+        method: 'PUT',
+        body: JSON.stringify(mailData)
+    },    
+),
+
+    deleteMail: (mailId) => fetchApi(`mail/${mailId}`,{
+        method: 'DELETE'
+    })
+}
