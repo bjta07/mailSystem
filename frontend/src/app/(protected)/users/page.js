@@ -1,12 +1,10 @@
-import { ProtectedRoute } from '@/app/components/UI/ProtectedRoute'
+import { ProtectedRoute } from "@/app/components/UI/ProtectedRoute";
+import UserDashboard from "@/app/components/UI/Dashboard";
 
-export default function UsersPage() {
-  return (
+export default function mainPage(){
+  return(
     <ProtectedRoute>
-      <div className="p-8">
-        <h1 className="text-3xl font-bold mb-6">Panel de Usuario</h1>
-        <p>Contenido para usuarios normales.</p>
-      </div>
+        <UserDashboard/>
     </ProtectedRoute>
   )
 }

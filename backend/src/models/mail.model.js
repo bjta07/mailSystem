@@ -51,6 +51,7 @@ const findAll = async () => {
                 c.cite,
                 p.nombre AS procedencia,
                 e.nombre AS estado,
+                c.estado_id,
                 u.uid AS recepcionado_por_id,
                 u.name AS recepcionado_por_nombre,
                 u.username AS recepcionado_por_username
@@ -82,17 +83,28 @@ const findById = async (id) => {
 }
 
 // Actualizar
-const update = async (id, {
-    hoja_ruta,
-    referencia,
-    procedencia_id,
-    remitente,
-    cargo_remitente,
-    estado_id,
-    fecha_carta,
-    fecha_recepcion,
-    cite
-}) => {
+const update = async (id, updateData) => {
+    // Primero, obtener los datos actuales
+    const currentData = await findById(id);
+    if (!currentData) {
+        throw new Error('Correspondence not found');
+    }
+
+    // Combinar datos actuales con actualizaciones
+    const finalData = {
+        hoja_ruta: updateData.hoja_ruta || currentData.hoja_ruta,
+        referencia: updateData.referencia || currentData.referencia,
+        procedencia_id: updateData.procedencia_id || currentData.procedencia_id,
+        remitente: updateData.remitente || currentData.remitente,
+        cargo_remitente: updateData.cargo_remitente || currentData.cargo_remitente,
+        estado_id: updateData.estado_id || currentData.estado_id,
+        fecha_carta: updateData.fecha_carta || currentData.fecha_carta,
+        fecha_recepcion: updateData.fecha_recepcion || currentData.fecha_recepcion,
+        cite: updateData.cite || currentData.cite
+    };
+
+    console.log('Datos a actualizar:', finalData); // Log para debugging
+
     const query = {
         text: `
             UPDATE correspondencia
@@ -100,7 +112,18 @@ const update = async (id, {
                 cargo_remitente=$5, estado_id=$6, fecha_carta=$7, fecha_recepcion=$8, cite=$9
             WHERE id=$10
             RETURNING *`,
-        values: [hoja_ruta, referencia, procedencia_id, remitente, cargo_remitente, estado_id, fecha_carta, fecha_recepcion, cite, id]
+        values: [
+            finalData.hoja_ruta, 
+            finalData.referencia, 
+            finalData.procedencia_id, 
+            finalData.remitente, 
+            finalData.cargo_remitente, 
+            finalData.estado_id, 
+            finalData.fecha_carta, 
+            finalData.fecha_recepcion, 
+            finalData.cite, 
+            id
+        ]
     }
     const { rows } = await db.query(query)
     return rows[0]

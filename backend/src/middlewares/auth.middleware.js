@@ -106,24 +106,43 @@ export const verifyUser = (req, res, next) => {
 }
 
 //Veriricar cuenta
-export const verifyOwner = (req, res, next) => {
-    if (!req.uid) {
-        return res.status(401).json({
+export const verifyOwner = async (req, res, next) => {
+    try {
+        if (!req.uid) {
+            return res.status(401).json({
+                ok: false,
+                error: 'Authentication required'
+            })
+        }
+
+        const { MailModel } = await import('../models/mail.model.js')
+        const mail = await MailModel.findById(req.params.id)
+
+        if (!mail) {
+            return res.status(404).json({
+                ok: false,
+                error: 'Correspondence not found'
+            })
+        }
+
+        // ✅ El dueño es quien registró el mail
+        if (mail.recepcionado_por.toString() === req.uid || req.role === 1) {
+            return next()
+        }
+
+        return res.status(403).json({
             ok: false,
-            error: 'Authentication required'
+            error: 'Access denied. You can only edit your own correspondence'
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            ok: false,
+            error: 'Server error verifying ownership'
         })
     }
-    const { uid } = req.params
-
-    if (req.uid === uid || req.role === 1) {
-        return next()
-    }
-
-    return res.status(403).json({
-        ok: false,
-        error: 'Access denied. You can only access your own resources'
-    })
 }
+
 
 //Verificar si el usuario tiene la cuenta activa
 export const verifyActiveUser = async (req, res, next) => {

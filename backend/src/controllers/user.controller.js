@@ -253,6 +253,92 @@ const updateUser = async (req, res) => {
     }
 }
 
+// actualizar perfil personal
+const updatePersonalProfile = async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const { username, phone } = req.body;
+
+        // Verificar que el usuario solo pueda actualizar su propio perfil
+        if (req.uid !== parseInt(uid)) {
+            return res.status(403).json({ 
+                ok: false, 
+                msg: 'No tienes permiso para actualizar este perfil' 
+            });
+        }
+
+        const user = await UserModel.findOneByUid(uid);
+        if (!user) {
+            return res.status(404).json({ ok: false, msg: 'Usuario no encontrado' });
+        }
+
+        // Solo actualizamos nombre y teléfono
+        const updatedUser = await UserModel.updateProfile(uid, { 
+            username, 
+            phone,
+            email: user.email, // mantenemos el email actual
+            ci: user.ci, // mantenemos el CI actual
+            name: user.name
+        });
+
+        return res.json({
+            ok: true,
+            data: updatedUser,
+            msg: 'Perfil actualizado correctamente'
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ ok: false, msg: 'Error al actualizar el perfil' });
+    }
+};
+
+// cambiar contraseña
+const updatePassword = async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const { currentPassword, newPassword } = req.body;
+
+        // Verificar que el usuario solo pueda cambiar su propia contraseña
+        if (req.uid !== parseInt(uid)) {
+            return res.status(403).json({ 
+                ok: false, 
+                msg: 'No tienes permiso para cambiar esta contraseña' 
+            });
+        }
+
+        // Obtener usuario
+        const user = await UserModel.findOneByUid(uid);
+        if (!user) {
+            return res.status(404).json({ ok: false, msg: 'Usuario no encontrado' });
+        }
+
+        // Verificar contraseña actual
+        const isMatch = await bcryptjs.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ ok: false, msg: 'La contraseña actual es incorrecta' });
+        }
+
+        // Hashear nueva contraseña
+        const salt = await bcryptjs.genSalt(10);
+        const hashedPassword = await bcryptjs.hash(newPassword, salt);
+
+        // Actualizar contraseña
+        const updatedUser = await UserModel.updatePassword(uid, hashedPassword);
+
+        return res.json({
+            ok: true,
+            data: {
+                uid: updatedUser.uid,
+                name: updatedUser.name
+            },
+            msg: 'Contraseña actualizada correctamente'
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ ok: false, msg: 'Error al actualizar la contraseña' });
+    }
+};
+
 export const UserController = {
     register,
     login,
@@ -261,5 +347,7 @@ export const UserController = {
     updateRole,
     updateUserStatus,
     deleteUser,
-    updateUser
+    updateUser,
+    updatePersonalProfile,
+    updatePassword
 }

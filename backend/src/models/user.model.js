@@ -120,18 +120,18 @@ const deleteUser = async (uid) => {
 }
 
 //actualizar perfil
-const updateProfile = async (uid, { name, email, ci, phone }) => {
+const updateProfile = async (uid, { username, email, ci, phone }) => {
     const query = {
         text: `
             UPDATE users
-            SET name = $2, email= $3, ci= $4, phone= $5 updated_at = CURRENT_TIMESTAMP
+            SET username = $2, email = $3, ci = $4, phone = $5, updated_at = CURRENT_TIMESTAMP
             WHERE uid = $1
-            RETURNING uid, name, username, email, password, phone, ci, role, is_active as "isActive", updated_at
+            RETURNING uid, name, username, email, phone, ci, role, is_active as "isActive", updated_at
         `, 
-        values: [uid, name, email, ci, phone]
+        values: [uid, username, email, ci, phone]
     }
     const { rows } = await db.query(query)
-    return rows [0]
+    return rows[0]
 }
 
 //actualizar contraseña

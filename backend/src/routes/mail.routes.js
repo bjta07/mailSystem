@@ -1,7 +1,7 @@
 // mail.routes.js
 import { Router } from "express"
 import { MailController } from "../controllers/mail.controller.js"
-import { verifyActiveUserorAdmin, verifyActiveAdmin } from "../middlewares/auth.middleware.js"
+import { verifyActiveUserorAdmin, verifyActiveAdmin, verifyOwner, verifyActiveToken } from "../middlewares/auth.middleware.js"
 
 const router = Router()
 
@@ -12,8 +12,8 @@ router.post("/", verifyActiveUserorAdmin, MailController.create)
 router.get("/", verifyActiveUserorAdmin, MailController.getAll)
 router.get("/:id", verifyActiveUserorAdmin, MailController.getById)
 
-// Actualizar → cualquier usuario autenticado
-router.put("/:id", verifyActiveUserorAdmin, MailController.update)
+// Actualizar → solo puede actualizar los registros que hizo el usuario 
+router.put("/:id", verifyActiveToken, verifyOwner, MailController.update)
 
 // Eliminar → solo Admin
 router.delete("/:id", verifyActiveAdmin, MailController.remove)

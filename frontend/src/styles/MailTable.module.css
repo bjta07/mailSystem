@@ -104,6 +104,87 @@
     margin-bottom: 1rem;
 }
 
+/* Agregar estos estilos a tu MailTable.module.css existente */
+
+.searchContainer {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.searchGroup {
+  display: flex;
+  gap: 15px;
+  align-items: end;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.searchLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.searchInput {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+  transition: border-color 0.2s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.clearButton {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  height: fit-content;
+  transition: background-color 0.2s ease;
+}
+
+.clearButton:hover {
+  background-color: #5a6268;
+}
+
+.resultsInfo {
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+  .searchGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .searchInput {
+    min-width: 100%;
+  }
+  
+  .clearButton {
+    align-self: center;
+    width: fit-content;
+  }
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

@@ -26,4 +26,8 @@ router.put('/:uid/role', verifyActiveAdmin, UserController.updateRole)
 router.put('/:uid/status', verifyActiveAdmin, UserController.updateUserStatus)
 router.delete('/:uid', verifyActiveAdmin, UserController.deleteUser)
 
+// Rutas de perfil personal
+router.put('/:uid/profile', verifyActiveToken, verifyOwner, UserController.updatePersonalProfile)
+router.put('/:uid/password', verifyActiveToken, verifyOwner, UserController.updatePassword)
+
 export default router
