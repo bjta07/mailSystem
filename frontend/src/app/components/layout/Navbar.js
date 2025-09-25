@@ -18,6 +18,8 @@ export default function Navbar() {
         { href: `/admin/createUser`, label: "Crear nuevo usuario", icon: "addUser" },
         { href: `/users/correspondencia`, label: "Crear correspondencia", icon: "addDocument" },
         { href: `/users/seguimiento`, label: "Seguimiento",icon: "searchDocument" },
+        { href: `/users/registrar`, label: "Registrar Afiliado", icon:"addUser"},
+        { href: `/users/listaAfiliados`, label: "Afiliados"},
         { href: `/admin/reports`, label: "Informes", icon: "report" }
     ]
 
@@ -26,6 +28,8 @@ export default function Navbar() {
         { href: `/users`, label: "Dashboard", icon: "dashboard" },
         { href: `/users/correspondencia`, label: "Crear correspondencia", icon: "addDocument" },
         { href: `/users/seguimiento`, label: "Seguimiento", icon: "searchDocument" },
+        { href: `/users/registrar`, label: "Registrar Afiliado", icon:"addUser"},
+        { href: `/users/listaAfiliados`, label: "Afiliados"},
         { href: `/users/informes`, label: "Informes", icon: "report"}
     ]
 

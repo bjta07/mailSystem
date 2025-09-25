@@ -191,3 +191,97 @@ export const mailApi = {
         method: 'DELETE'
     })
 }
+
+export const memberApi = {
+    registerMember: async (memberData) => fetchApi('afiliados',{
+        method: 'POST',
+        body: JSON.stringify(memberData)
+    }),
+
+    updateMember: async(id, memberData) => fetchApi(`afiliados/${id}`,{
+        method: 'PUT',
+        body: JSON.stringify(memberData)
+    }),
+
+    getAllMembers: async () => {
+        try {
+            const response = await fetchApi('afiliados');
+            console.log('Respuesta de getAll:', response);
+            
+            // Asegurarse de que devolvemos un array
+            if (response && response.data) {
+                return {
+                    ok: true,
+                    data: Array.isArray(response.data) ? response.data : [response.data]
+                };
+            }
+            
+            // Si la respuesta es un array directamente
+            if (Array.isArray(response)) {
+                return {
+                    ok: true,
+                    data: response
+                };
+            }
+            
+            throw new Error('Formato de respuesta inválido');
+        } catch (error) {
+            console.error('Error en findAll:', error);
+            throw error;
+        }
+    },
+
+    getByCi: async (ci) => {
+        try {
+            const response = await fetchApi(`afiliados/ci/${ci}`);
+            console.log('Respuesta de getById:', response);
+
+            if (response && response.data) {
+                return {
+                    ok: true,
+                    data: response.data
+                };
+            }
+
+        // Si la API devuelve directamente el objeto (no envuelto en { data })
+            if (response) {
+                return {
+                    ok: true,
+                    data: response
+                };
+            }
+
+            throw new Error('No se encontró correspondencia con ese ID');
+        } catch (error) {
+            console.error('Error en getById:', error);
+            throw error;
+        }
+    },
+
+    getByCity: async (colegio_id) => {
+        try {
+            const response = await fetchApi(`afiliados/colegio/${colegio_id}`);
+            console.log('Respuesta de getById:', response);
+
+            if (response && response.data) {
+                return {
+                    ok: true,
+                    data: response.data
+                };
+            }
+
+        // Si la API devuelve directamente el objeto (no envuelto en { data })
+            if (response) {
+                return {
+                    ok: true,
+                    data: response
+                };
+            }
+
+            throw new Error('No se encontró correspondencia con ese ID');
+        } catch (error) {
+            console.error('Error en getById:', error);
+            throw error;
+        }
+    }
+}
