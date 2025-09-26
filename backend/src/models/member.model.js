@@ -16,7 +16,7 @@ const createMember = async ({
             ci,
             nombres,
             apellidos,
-            colegio_id
+            parseInt(colegio_id)
         ]
     }
     const { rows } = await db.query(query)
@@ -40,8 +40,14 @@ const findAllMembers = async () => {
     const query = {
         text: `
             SELECT
-            ci, nombres, apellidos, colegio_id
-            FROM afiliados
+            a.id, 
+            a.ci, 
+            a.nombres, 
+            a.apellidos, 
+            a.colegio_id,
+            c.colegio AS colegio_nombre
+            FROM afiliados a
+            JOIN colegios c ON a.colegio_id = c.id
             ORDER BY apellidos DESC
         `
     }
@@ -86,7 +92,7 @@ const updateMember = async (id,{ ci, nombres, apellidos, colegio_id}) => {
             WHERE id=$1
             RETURNING id, ci, nombres, apellidos, colegio_id
         `,
-        values: [id, ci, nombres, apellidos, colegio_id]
+        values: [id, ci, nombres, apellidos, colegio_id ? parseInt(colegio_id, 10): null]
     }
     const { rows } = await db.query(query)
     return rows[0]

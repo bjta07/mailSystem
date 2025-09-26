@@ -1,0 +1,126 @@
+// aporte.controller.js
+import { db } from "../config/db.js";
+
+// Función auxiliar para convertir número de mes a nombre
+const getMonthName = (num) => {
+    const months = [
+        'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+        'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+    ];
+    return months[num - 1] || '';
+};
+
+// Crear aporte
+const create = async ({
+    afiliado_id,
+    anio,
+    mes,
+    monto,
+    fecha_registro
+}) => {
+    const query = {
+        text: `
+            INSERT INTO aportes
+            (afiliado_id, anio, mes, monto, fecha_registro)
+            VALUES ($1, $2, $3, $4, COALESCE($5, CURRENT_TIMESTAMP))
+            RETURNING *
+        `,
+        values: [
+            parseInt(afiliado_id),
+            parseInt(anio),
+            parseInt(mes),
+            parseFloat(monto),
+            fecha_registro
+        ]
+    };
+
+    const { rows } = await db.query(query);
+    return rows[0];
+};
+
+// Obtener todos los aportes con paginación
+const findAll = async ({ page = 1, limit = 10 }) => {
+    const offset = (page - 1) * limit;
+
+    const query = {
+        text: `
+            SELECT a.id, a.anio, a.mes, a.monto, a.fecha_registro,
+                   af.nombres, af.apellidos, af.ci,
+                   c.colegio
+            FROM aportes a
+            JOIN afiliados af ON a.afiliado_id = af.id
+            JOIN colegios c ON af.colegio_id = c.id
+            ORDER BY a.fecha_registro DESC
+            LIMIT $1 OFFSET $2
+        `,
+        values: [limit, offset]
+    };
+
+    const { rows } = await db.query(query);
+    return rows.map(r => ({ ...r, mes_nombre: getMonthName(r.mes) }));
+};
+
+// Obtener aportes de un afiliado específico con paginación
+const findByAfiliado = async ({ afiliado_id, page = 1, limit = 10 }) => {
+    const offset = (page - 1) * limit;
+
+    const query = {
+        text: `
+            SELECT a.id, a.anio, a.mes, a.monto, a.fecha_registro,
+                   af.nombres, af.apellidos, af.ci,
+                   c.colegio
+            FROM aportes a
+            JOIN afiliados af ON a.afiliado_id = af.id
+            JOIN colegios c ON af.colegio_id = c.id
+            WHERE a.afiliado_id = $1
+            ORDER BY a.anio DESC, a.mes DESC
+            LIMIT $2 OFFSET $3
+        `,
+        values: [parseInt(afiliado_id), limit, offset]
+    };
+
+    const { rows } = await db.query(query);
+    return rows.map(r => ({ ...r, mes_nombre: getMonthName(r.mes) }));
+};
+
+// Obtener aportes por rango de fecha_registro con paginación
+const findByFechaRegistro = async ({ fecha_inicio, fecha_fin, page = 1, limit = 10 }) => {
+    const offset = (page - 1) * limit;
+
+    const query = {
+        text: `
+            SELECT a.id, a.anio, a.mes, a.monto, a.fecha_registro,
+                   af.nombres, af.apellidos, af.ci,
+                   c.colegio
+            FROM aportes a
+            JOIN afiliados af ON a.afiliado_id = af.id
+            JOIN colegios c ON af.colegio_id = c.id
+            WHERE a.fecha_registro BETWEEN $1 AND $2
+            ORDER BY a.fecha_registro DESC
+            LIMIT $3 OFFSET $4
+        `,
+        values: [fecha_inicio, fecha_fin, limit, offset]
+    };
+
+    const { rows } = await db.query(query);
+    return rows.map(r => ({ ...r, mes_nombre: getMonthName(r.mes) }));
+};
+
+// Eliminar aporte por ID
+const deleteAporte = async ({ id }) => {
+    const query = {
+        text: `DELETE FROM aportes WHERE id = $1`,
+        values: [parseInt(id)]
+    };
+
+    await db.query(query);
+    return { message: "Aporte eliminado correctamente" };
+};
+
+export const AporteModel = {
+    create,
+    findAll,
+    findByAfiliado,
+    findByFechaRegistro,
+    deleteAporte
+};

@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import userRouter from './routes/user.routes.js'
 import mailRouter from './routes/mail.routes.js'
 import memberRouter from './routes/member.routes.js'
+import aporteRouter from './routes/aporte.routes.js'
 
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.use(express.static('public'))
 app.use('/api/users', userRouter)
 app.use('/api/mail', mailRouter )
 app.use('/api/afiliados', memberRouter)
+app.use('/api/aportes', aporteRouter)
 
 // Middleware para manejo de errores
 app.use((err, req, res, next) => {

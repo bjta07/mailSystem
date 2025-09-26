@@ -283,5 +283,9 @@ export const memberApi = {
             console.error('Error en getById:', error);
             throw error;
         }
-    }
+    },
+
+    deleteMember: (memberId) => fetchApi(`afiliados/${memberId}`,{
+        method: 'DELETE'
+    })
 }

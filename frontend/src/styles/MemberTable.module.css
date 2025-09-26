@@ -1,0 +1,203 @@
+.tableContainer {
+    width: 100%;
+    max-height: 70vh; /* Máximo alto de la tabla, ajustable según tu diseño */
+    overflow-x: auto;  /* Scroll horizontal si la tabla es muy ancha */
+    overflow-y: auto;  /* Scroll vertical si hay muchos registros */
+    margin: 1rem 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px 35px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.tableHeader {
+    background-color: #f8f9fa;
+}
+
+.tableHeader th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.tableBody td {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    color: #212529;
+}
+
+.tableRow:hover {
+    background-color: #f8f9fa;
+}
+
+.centered {
+    text-align: center !important;
+}
+
+.editButton {
+    padding: 0.5rem 1rem;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.editButton:hover {
+    background-color: #0051cc;
+}
+
+.statusBadge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status1 {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+}
+
+.status2 {
+    background-color: #fff3e0;
+    color: #e65100;
+}
+
+.status3 {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+}
+
+.status4 {
+    background-color: #efebe9;
+    color: #3e2723;
+}
+
+.noData {
+    text-align: center;
+    color: #6c757d;
+    padding: 2rem !important;
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0070f3;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+/* Agregar estos estilos a tu MailTable.module.css existente */
+
+.searchContainer {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.searchGroup {
+  display: flex;
+  gap: 15px;
+  align-items: end;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.searchLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.searchInput {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+  transition: border-color 0.2s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.clearButton {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  height: fit-content;
+  transition: background-color 0.2s ease;
+}
+
+.clearButton:hover {
+  background-color: #5a6268;
+}
+
+.resultsInfo {
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+  .searchGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .searchInput {
+    min-width: 100%;
+  }
+  
+  .clearButton {
+    align-self: center;
+    width: fit-content;
+  }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.errorContainer {
+    padding: 1rem;
+    background-color: #fff5f5;
+    border: 1px solid #fc8181;
+    border-radius: 4px;
+    color: #c53030;
+    margin: 1rem 0;
+}
