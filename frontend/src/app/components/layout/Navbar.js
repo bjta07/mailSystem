@@ -19,7 +19,8 @@ export default function Navbar() {
         { href: `/users/correspondencia`, label: "Crear correspondencia", icon: "addDocument" },
         { href: `/users/seguimiento`, label: "Seguimiento",icon: "searchDocument" },
         { href: `/users/registrar`, label: "Registrar Afiliado", icon:"addUser"},
-        { href: `/users/listaAfiliados`, label: "Afiliados"},
+        { href: `/users/listaAfiliados`, label: "Afiliados", icon:"users"},
+        { href: `/admin/aportes`, label: "Aportes", icon:"editCash"},
         { href: `/admin/reports`, label: "Informes", icon: "report" }
     ]
 
@@ -29,7 +30,7 @@ export default function Navbar() {
         { href: `/users/correspondencia`, label: "Crear correspondencia", icon: "addDocument" },
         { href: `/users/seguimiento`, label: "Seguimiento", icon: "searchDocument" },
         { href: `/users/registrar`, label: "Registrar Afiliado", icon:"addUser"},
-        { href: `/users/listaAfiliados`, label: "Afiliados"},
+        { href: `/users/listaAfiliados`, label: "Afiliados", icon:"users"},
         { href: `/users/informes`, label: "Informes", icon: "report"}
     ]
 

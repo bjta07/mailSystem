@@ -289,3 +289,49 @@ export const memberApi = {
         method: 'DELETE'
     })
 }
+
+export const aportesApi = {
+    createAporte: async (aporteData) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No hay sesión activa. Por favor, inicie sesión.');
+        }
+        return fetchApi('aportes', {
+            method: 'POST',
+            body: JSON.stringify(aporteData)
+        });
+    },
+
+    updateAporte: (aporteId, aporteData) => fetchApi(`aportes/${aporteId}`,{
+        method: 'PUT',
+        body: JSON.stringify(aporteData)
+    }),
+
+    getAllAportes: async (page = 1, limit = 10) => {
+        return fetchApi(`aportes?page=${page}&limit=${limit}`, {
+            method: 'GET'
+        });
+    },
+
+    getAportesByAfiliado: async (afiliadoId, { page = 1, limit = 10 } = {}) => {
+        if (!afiliadoId || afiliadoId === 'undefined' || afiliadoId === 'null') {
+            throw new Error('ID de afiliado no válido');
+        }
+        return fetchApi(`aportes/afiliado/${afiliadoId}?page=${page}&limit=${limit}`, {
+            method: 'GET'
+        });
+    },
+
+    getAportesByFechaRegistro: async (fecha_inicio, fecha_fin, page = 1, limit = 10) => {
+        return fetchApi(
+            `aportes/fecha?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}&page=${page}&limit=${limit}`,
+            { method: 'GET' }
+        );
+    },
+
+    removeAporte: async (aporteId) => {
+        return fetchApi(`aportes/${aporteId}`, {
+            method: 'DELETE'
+        });
+    }
+}

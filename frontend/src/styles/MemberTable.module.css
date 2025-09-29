@@ -40,6 +40,8 @@
 
 .centered {
     text-align: center !important;
+    display: flex;
+    gap: 15px;
 }
 
 .editButton {
@@ -50,6 +52,9 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
 .editButton:hover {
@@ -200,4 +205,40 @@
     border-radius: 4px;
     color: #c53030;
     margin: 1rem 0;
+}
+
+.actionBtn {
+  display: flex;
+  gap: 15px
+}
+
+.actionBtn button{
+  border: none;
+  border-radius: 7px;
+  padding: 5px 15px;
+  color: white;
+}
+
+.actionBtn .registerBtn{
+  background-color:#1b5e20;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.registerBtn:hover{
+  background-color: #308b36;
+  cursor: pointer;
+}
+
+.actionBtn .seeBtn{
+  background-color: #0d47a1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.seeBtn:hover{
+  background-color:#007bff;
+  cursor: pointer;
 }

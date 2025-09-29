@@ -4,12 +4,13 @@ import { verifyActiveUserorAdmin, verifyActiveAdmin } from "../middlewares/auth.
 
 const router = Router()
 
-router.post('/', AportesController.create)
+router.post('/', verifyActiveUserorAdmin, AportesController.create)
 
-router.get('/', AportesController.getAll)
-router.get('/:id', AportesController.getByAfiliado)
-router.get('/:id', AportesController.getByFechaRegistro)
+router.get('/', verifyActiveUserorAdmin, AportesController.getAll)
+router.get('/afiliado/:id',verifyActiveUserorAdmin, AportesController.getByAfiliado)
+router.get('/:id',verifyActiveUserorAdmin, AportesController.getByFechaRegistro)
 
-router.delete('/:id', AportesController.remove)
+router.put('/:id', verifyActiveAdmin, AportesController.update)
+router.delete('/:id',verifyActiveAdmin, AportesController.remove)
 
 export default router

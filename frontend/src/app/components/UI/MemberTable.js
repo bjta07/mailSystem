@@ -3,11 +3,17 @@ import { useEffect, useState, useMemo } from "react"
 import { memberApi } from "@/config/api/apiAuth"
 import { useAuth } from "@/config/contexts/AuthContext"
 import MemberModal from "./MemberModal"
+import AportesViewModal from "./VerAportesModal"
+import RegistrarAporteModal from "./AportesModal"
 import styles from "@/styles/MemberTable.module.css"
+import Icon from "./Icons"
 
 export default function MemberTable(){
     const [members, setMembers] = useState([])
     const [loading, setLoading] = useState(true)
+    const [isRegistrarModalOpen, setIsRegistrarModalOpen] = useState(false)
+    const [isVerAportesModalOpen, setIsVerAportesModalOpen] = useState(false)
+
     const [error, setError] = useState(null)
     const [selectedMember, setSelectedMember] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -16,6 +22,7 @@ export default function MemberTable(){
         colegio_id:''
     })
     const { user: currentUser} = useAuth()
+    
     const handleEditClick = (member) => {
         setSelectedMember(member)
         setIsModalOpen(true)
@@ -57,7 +64,7 @@ export default function MemberTable(){
         if (searchFilters.ci.trim() !== '') {
                 filtered = filtered.filter(member => {
                 if (!member.ci) return false
-                return ci === searchFilters.ci
+                return member.ci === searchFilters.ci
             })
         }
         if (searchFilters.colegio_id.trim() !== '') {
@@ -82,6 +89,63 @@ export default function MemberTable(){
         } finally{
             setLoading(false)
         }
+    }
+
+    // ✅ MEJORADO: Handlers para manejar el cierre de modales
+    const handleCloseVerAportesModal = () => {
+        setIsVerAportesModalOpen(false)
+        // No limpiar selectedMember inmediatamente
+        setTimeout(() => {
+            if (!isRegistrarModalOpen && !isModalOpen) {
+                setSelectedMember(null)
+            }
+        }, 100)
+    }
+
+    const handleCloseRegistrarModal = () => {
+        setIsRegistrarModalOpen(false)
+        setTimeout(() => {
+            if (!isVerAportesModalOpen && !isModalOpen) {
+                setSelectedMember(null)
+            }
+        }, 100)
+    }
+
+    const handleCloseEditModal = () => {
+        setIsModalOpen(false)
+        setTimeout(() => {
+            if (!isVerAportesModalOpen && !isRegistrarModalOpen) {
+                setSelectedMember(null)
+            }
+        }, 100)
+    }
+
+    // ✅ MEJORADO: Handlers para abrir modales con validación
+    const handleOpenVerAportes = (member) => {
+        console.log('📋 Abriendo modal de aportes para:', member)
+        console.log('📋 ID del miembro:', member?.id, typeof member?.id)
+        
+        if (!member || !member.id) {
+            console.error('❌ Error: Miembro o ID inválido')
+            setError('Error: Datos del afiliado inválidos')
+            return
+        }
+        
+        setSelectedMember(member)
+        setIsVerAportesModalOpen(true)
+    }
+
+    const handleOpenRegistrarAporte = (member) => {
+        console.log('📝 Abriendo modal de registro para:', member)
+        
+        if (!member || !member.id) {
+            console.error('❌ Error: Miembro o ID inválido')
+            setError('Error: Datos del afiliado inválidos')
+            return
+        }
+        
+        setSelectedMember(member)
+        setIsRegistrarModalOpen(true)
     }
 
     useEffect(() => {
@@ -114,7 +178,7 @@ export default function MemberTable(){
         return(
             <div className={styles.loadingContainer}>
             <div className={styles.spinner}></div>
-            <p>Cargando correspondencias...</p>
+            <p>Cargando Afiliados...</p>
         </div>
         )
     }
@@ -200,8 +264,16 @@ export default function MemberTable(){
                                         <button
                                             onClick={()=> handleEditClick(member)}
                                             className={styles.editButton}
-                                        > Editar</button>
+                                        ><Icon name="edit" fill/> Editar</button>
                                     )}
+                                    <div className={styles.actionBtn}>
+                                        <button onClick={() => handleOpenRegistrarAporte(member)} className={styles.registerBtn}>
+                                            <Icon name="register" fill/>Registrar Aporte
+                                        </button>
+                                        <button onClick={() => handleOpenVerAportes(member)} className={styles.seeBtn}>
+                                            <Icon name="see" fill/>Ver aportes
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))
@@ -218,19 +290,28 @@ export default function MemberTable(){
                 </tbody>
             </table>
 
-            {selectedMember && (
-                <MemberModal
-                    member = {selectedMember}
-                    isOpen = {isModalOpen}
-                    onClose={() => {
-                        setIsModalOpen(false)
-                        setSelectedMember(null)
-                    }}
-                    onSave={handleSave}
-                    userRole={currentUser?.role}
-                    onDelete={handleDelete}
-                />
-            )}
+            {/* ✅ MEJORADO: Renderizar modales independientemente */}
+            <MemberModal
+                member = {selectedMember}
+                isOpen = {isModalOpen}
+                onClose={handleCloseEditModal}
+                onSave={handleSave}
+                userRole={currentUser?.role}
+                onDelete={handleDelete}
+            />
+            
+            <RegistrarAporteModal
+                member={selectedMember}
+                isOpen={isRegistrarModalOpen}
+                onClose={handleCloseRegistrarModal}
+                onSave={(aporte) => console.log("✅ Aporte guardado:", aporte)}
+            />
+            
+            <AportesViewModal
+                member={selectedMember}
+                isOpen={isVerAportesModalOpen}
+                onClose={handleCloseVerAportesModal}
+            />
         </div>
     )
 }
