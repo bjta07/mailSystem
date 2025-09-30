@@ -76,6 +76,9 @@
 .saveButton {
     background-color: #2563eb;
     color: white;
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
 .editButton:hover,
@@ -87,6 +90,9 @@
     background-color: #059669;
     color: white;
     margin-top: 1rem;
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
 .passwordButton:hover {
@@ -96,6 +102,9 @@
 .cancelButton {
     background-color: #dc2626;
     color: white;
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
 .cancelButton:hover {

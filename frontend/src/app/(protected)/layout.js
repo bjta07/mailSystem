@@ -3,13 +3,16 @@
 import Header from "../components/layout/Header";
 import { useAuth } from "@/config/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import styles from '@/styles/Layout.module.css'
+import Icon from "../components/UI/Icons";
+
 
 export default function ProtectedLayout({ children }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -19,28 +22,32 @@ export default function ProtectedLayout({ children }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando...</p>
-        </div>
+      <div>
+        <p>Cargando...</p>
       </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
-    <div className={styles.main}>
+    <div 
+      className={styles.main} 
+      style={{ gridTemplateColumns: collapsed ? "70px 1fr" : "250px 1fr" }}
+    >
       <div className={styles.header}>
+        <button 
+          className={styles.toggleBtn} 
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          {collapsed ? <Icon name="expand" fill /> : <Icon name="collapse" fill/>}
+        </button>
         <Header />
       </div>
       <div className={styles.sidebar}>
-        <Navbar/>
+        <Navbar collapsed={collapsed} />
       </div>
-      <main className="container mx-auto px-4 py-8">
+      <main className={styles.content}>
         {children}
       </main>
     </div>

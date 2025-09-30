@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from '@/styles/MemberModal.module.css'
+import Icon from "./Icons";
 
 export default function MemberModal({
     member,
@@ -124,13 +125,15 @@ export default function MemberModal({
                             </select>
                     </label>
                     <div className={styles.actions}>
-                        <button type="submit" className={styles.saveBtn}>Guardar</button>
+                        <button type="submit" className={styles.saveBtn}><Icon name="save" fill/> Guardar</button>
                         {userRole === 1 && (
                             <button type="button" onClick={handleDelete} className={styles.deleteBtn}>
+                                <Icon name="delete" fill/>
                                 Eliminar
                             </button>
                         )}
                         <button type="button" className={styles.cancelBtn} onClick={onClose}>
+                            <Icon name="cancel" fill/>
                             Cancelar
                         </button>
                     </div>

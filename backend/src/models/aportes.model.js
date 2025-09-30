@@ -177,6 +177,61 @@ const findByFechaRegistro = async ({ fecha_inicio, fecha_fin, page = 1, limit = 
     return rows.map(r => ({ ...r, mes_nombre: getMonthName(r.mes) }));
 };
 
+// Obtener aportes por año con paginación
+const findByAnio = async ({ anio, page = 1, limit = 10 }) => {
+  const offset = (page - 1) * limit;
+
+  // 1️⃣ Contar total
+  const countQuery = {
+    text: `SELECT COUNT(*) FROM aportes WHERE anio = $1`,
+    values: [parseInt(anio)],
+  };
+  const countResult = await db.query(countQuery);
+  const total = parseInt(countResult.rows[0].count, 10);
+
+  // 2️⃣ Obtener registros con JOIN
+  const query = {
+    text: `
+      SELECT a.id, a.anio, a.mes, a.monto, a.fecha_registro,
+             af.nombres, af.apellidos, af.ci,
+             c.colegio
+      FROM aportes a
+      JOIN afiliados af ON a.afiliado_id = af.id
+      JOIN colegios c ON af.colegio_id = c.id
+      WHERE a.anio = $1
+      ORDER BY a.mes DESC, a.fecha_registro DESC
+      LIMIT $2 OFFSET $3
+    `,
+    values: [parseInt(anio), limit, offset],
+  };
+
+  const { rows } = await db.query(query);
+
+  const data = rows.map(r => ({
+    ...r,
+    mes_nombre: getMonthName(r.mes),
+  }));
+
+  return {
+    data,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+};
+
+// Obtener todos los años distintos registrados en aportes
+const findAllYears = async () => {
+  const query = `
+    SELECT DISTINCT anio
+    FROM aportes
+    ORDER BY anio DESC
+  `;
+  const { rows } = await db.query(query);
+  return rows.map(r => r.anio);
+};
+
 // Eliminar aporte por ID
 const deleteAporte = async ({ id }) => {
     const query = {
@@ -194,5 +249,7 @@ export const AporteModel = {
     findAll,
     findByAfiliado,
     findByFechaRegistro,
+    findByAnio,
+    findAllYears,
     deleteAporte
 };

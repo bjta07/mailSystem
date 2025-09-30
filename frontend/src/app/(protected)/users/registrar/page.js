@@ -2,6 +2,7 @@
 import { memberApi } from "@/config/api/apiAuth"
 import { useState } from "react"
 import styles from '@/styles/MemberForm.module.css'
+import Icon from "@/app/components/UI/Icons"
 
 export default function RegistrarAfiliados(){
     const [formData, setFormData] = useState({
@@ -87,6 +88,7 @@ export default function RegistrarAfiliados(){
                         </select>
                     </div>
                     <button type="submit" className={styles.button} disabled={loading}>
+                        <Icon name="save" fill/>
                         {loading? "Registrando...": "Registrar"}
                     </button>
                     {message && <p className={styles.messate}>{message}</p>}

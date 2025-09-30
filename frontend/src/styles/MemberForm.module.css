@@ -81,6 +81,10 @@
     cursor: pointer;
     transition: 0.3s ease;
     margin: 0 auto;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
 }
 
 .button:hover{

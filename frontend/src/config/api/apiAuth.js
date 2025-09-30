@@ -48,6 +48,52 @@ async function fetchApi(url, options = {}) {
     }
 }
 
+async function fetchApiUpload(url, formData) {
+    if (!API_HOST) {
+        throw new Error('API_HOST no está definido');
+    }
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    
+    // Para FormData NO incluir Content-Type, el navegador lo agrega automáticamente
+    const defaultHeaders = {
+        ...(token && { Authorization: `Bearer ${token}` })
+    };
+    
+    const apiUrl = `${API_HOST}/api/${url}`.replace(/([^:]\/)\/+/g, "$1");
+    console.log('🚀 Uploading to:', apiUrl);
+
+    const config = {
+        method: 'POST',
+        headers: defaultHeaders,
+        body: formData // FormData directamente, sin JSON.stringify
+    };
+
+    try {
+        const response = await fetch(apiUrl, config);
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Respuesta no-JSON:', text);
+            throw new Error('El servidor no respondió con JSON válido');
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            const errorMsg = data.error || data.message || 'Error en la solicitud';
+            console.error('Error de API:', errorMsg);
+            throw new Error(errorMsg);
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error en fetchApiUpload:', error);
+        throw error;
+    }
+}
+
 export const authApi = {
     login: (credentials) => fetchApi('users/login', {
         method: 'POST',
@@ -333,5 +379,17 @@ export const aportesApi = {
         return fetchApi(`aportes/${aporteId}`, {
             method: 'DELETE'
         });
+    },
+
+    uploadAporte: async(formData) => {
+    return fetchApiUpload('aportes/bulk-upload', formData)
+    },
+    
+    getYearsAndAportes: async (anio) => {
+        const url = anio 
+            ? `aportes/anios-aportes?anio=${anio}`
+            : `aportes/anios-aportes`
+
+        return fetchApi(url, { method: 'GET' })
     }
 }

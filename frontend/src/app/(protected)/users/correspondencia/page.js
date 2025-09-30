@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"
 import { mailApi } from "@/config/api/apiAuth"
 import styles from "@/styles/Correspondencia.module.css"
+import Icon from "@/app/components/UI/Icons"
 
 export default function Correspondencia() {
     const [formData, setFormData] = useState({
@@ -244,6 +245,7 @@ export default function Correspondencia() {
                 </div>
 
                 <button type="submit" className={styles.button} disabled={loading}>
+                    <Icon name="save" fill/>
                     {loading ? "Registrando..." : "Registrar"}
                 </button>
 

@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react"
 import { aportesApi, memberApi } from "@/config/api/apiAuth"
 import { useAuth } from "@/config/contexts/AuthContext"
 import styles from '@/styles/Aportes.module.css'
+import Icon from "@/app/components/UI/Icons"
 
 export default function Aportes() {
   const [members, setMembers] = useState([])
@@ -10,6 +11,8 @@ export default function Aportes() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searchFilters, setSearchFilters] = useState({ ci: "", colegio_id: "" })
+  const [selectedYear, setSelectedYear] = useState(null)
+  const [availableYears, setAvailableYears] = useState([])
   const { user: currentUser } = useAuth()
 
   const meses = [
@@ -32,36 +35,27 @@ export default function Aportes() {
     "12": "Colegio regional de Catavi"
   }
 
-  // Estado para cambios en aportes
   const [editedAportes, setEditedAportes] = useState({})
 
   const filteredAndSortedMembers = useMemo(() => {
     if (!Array.isArray(members)) return []
     let filtered = members.filter(member => member.ci)
     if (searchFilters.ci.trim() !== "") {
-      filtered = filtered.filter(member => {
-        if (!member.ci) return false
-        return member.ci === searchFilters.ci
-      })
+      filtered = filtered.filter(member => member.ci === searchFilters.ci)
     }
     if (searchFilters.colegio_id.trim() !== "") {
-      filtered = filtered.filter(member => {
-        if (!member.colegio_id) return false
-        return String(member.colegio_id) === searchFilters.colegio_id
-      })
+      filtered = filtered.filter(member => String(member.colegio_id) === searchFilters.colegio_id)
     }
     return filtered.sort((a, b) => a.apellidos.localeCompare(b.apellidos))
   }, [members, searchFilters])
 
   const handleSearchChange = (field, value) => {
-    setSearchFilters(prev => ({
-      ...prev,
-      [field]: value
-    }))
+    setSearchFilters(prev => ({ ...prev, [field]: value }))
   }
 
   const clearSearch = () => {
     setSearchFilters({ ci: "", colegio_id: "" })
+    setSelectedYear(null)
   }
 
   // Cargar miembros
@@ -80,117 +74,159 @@ export default function Aportes() {
         setLoading(false)
       }
     }
-    if (currentUser) {
-      fetchMembers()
-    }
+    if (currentUser) fetchMembers()
   }, [currentUser])
 
-  // Cargar aportes
+  // Cargar años disponibles
   useEffect(() => {
-    const fetchAportes = async () => {
+    const fetchYears = async () => {
       try {
-        const aportesPorMiembro = {}
-        for (const member of members) {
-          const response = await aportesApi.getAportesByAfiliado(member.id, 1, 100)
-          if (response?.data) {
-            aportesPorMiembro[member.id] = response.data
-          }
+        const response = await aportesApi.getYearsAndAportes()
+        if (response?.data?.years) {
+          setAvailableYears(response.data.years)
         }
-        setAportaciones(aportesPorMiembro)
-      } catch (error) {
-        console.error("Error al obtener aportes:", error)
+      } catch (err) {
+        console.error("Error al obtener años disponibles:", err)
       }
     }
-    if (members.length > 0) {
-      fetchAportes()
-    }
-  }, [members])
+    fetchYears()
+  }, [])
 
-  // Editar aporte
+  // Cargar aportes filtrados por año y miembro
+  // Cargar aportes filtrados por año y miembro
+  useEffect(() => {
+    const fetchAportes = async () => {
+      try {
+        const aportesPorMiembro = {}
+        let allAportesForSelectedYear = []
+
+        if (selectedYear) {
+          // Obtener TODOS los aportes del año específico, UNA SOLA VEZ
+          const response = await aportesApi.getYearsAndAportes(selectedYear)
+          allAportesForSelectedYear = response.data.aportes || []
+        }
+
+        for (const member of members) {
+          let memberAportes
+
+          if (selectedYear) {
+            // Filtrar los aportes ya obtenidos por el ID del miembro
+            memberAportes = allAportesForSelectedYear.filter(a => a.afiliado_id === member.id)
+          } else {
+            // Obtener todos los aportes para ese miembro (si no hay año seleccionado)
+            const resp = await aportesApi.getAportesByAfiliado(member.id, { page: 1, limit: 100 })
+            memberAportes = resp.data
+          }
+          aportesPorMiembro[member.id] = memberAportes
+        }
+        setAportaciones(aportesPorMiembro)
+      } catch (error) {
+        console.error("Error al obtener aportes:", error)
+      }
+    }
+    if (members.length > 0) fetchAportes()
+  }, [members, selectedYear])
+
   const handleEditAporte = (aporteId, memberId, mes, value) => {
-  setEditedAportes(prev => ({
-    ...prev,
-    [aporteId]: {
-      memberId,
-      mes,
-      monto: value === "" ? "" : parseFloat(value)
-    }
-  }))
-}
-
-  // Guardar cambios
-  const handleSaveChanges = async () => {
-  try {
-    for (const [aporteId, data] of Object.entries(editedAportes)) {
-      if (data.monto !== "" && !isNaN(data.monto)) {
-        await aportesApi.updateAporte(aporteId, { monto: data.monto })
-      }
-    }
-    alert("Cambios guardados correctamente ✅")
-    setEditedAportes({})
-  } catch (err) {
-    console.error("Error al guardar cambios:", err)
-    alert("Hubo un error al guardar los cambios ❌")
+    setEditedAportes(prev => ({
+      ...prev,
+      [aporteId]: { memberId, mes, monto: value === "" ? "" : parseFloat(value) }
+    }))
   }
-}
+
+  const handleSaveChanges = async () => {
+    try {
+      for (const [aporteId, data] of Object.entries(editedAportes)) {
+        if (data.monto !== "" && !isNaN(data.monto)) {
+          await aportesApi.updateAporte(aporteId, { monto: data.monto })
+        }
+      }
+      alert("Cambios guardados correctamente ✅")
+      setEditedAportes({})
+    } catch (err) {
+      console.error("Error al guardar cambios:", err)
+      alert("Hubo un error al guardar los cambios ❌")
+    }
+  }
 
   if (loading) return <p>Cargando aportes...</p>
   if (error) return <p>Error: {error}</p>
 
   return (
-  <div className={styles.container}>
-      <h2>Lista de Afiliados</h2>
+    <div className={styles.container}>
+      <h2>Aportes</h2>
 
       <div className={styles.searchContainer}>
         <div className={styles.searchGroup}>
-            <label className={styles.searchLabel}>
+          <label className={styles.searchLabel}>
             CI:
             <input
-                id="ci"
-                className={styles.searchInput}
-                name="ci"
-                type="text"
-                placeholder="Carnet de Identidad"
-                value={searchFilters.ci}
-                onChange={(e) => handleSearchChange("ci", e.target.value)}
+              id="ci"
+              className={styles.searchInput}
+              name="ci"
+              type="text"
+              placeholder="Carnet de Identidad"
+              value={searchFilters.ci}
+              onChange={(e) => handleSearchChange("ci", e.target.value)}
             />
-            </label>
+          </label>
 
-            <label className={styles.searchLabel}>
+          <label className={styles.searchLabel}>
             Colegio:
             <select
-                id="colegio_id"
-                value={searchFilters.colegio_id}
-                onChange={(e) => handleSearchChange("colegio_id", e.target.value)}
+              className={styles.select}
+              id="colegio_id"
+              value={searchFilters.colegio_id}
+              onChange={(e) => handleSearchChange("colegio_id", e.target.value)}
             >
-                <option value="">Seleccione...</option>
-                {Object.entries(colegios).map(([id, nombre]) => (
+              <option value="">Seleccione...</option>
+              {Object.entries(colegios).map(([id, nombre]) => (
                 <option key={id} value={id}>{nombre}</option>
-                ))}
+              ))}
             </select>
-            </label>
+          </label>
+
+          <label className={styles.searchLabel}>
+            Año:
+            <select
+              className={styles.select}
+              value={selectedYear || ""}
+              onChange={(e) => setSelectedYear(e.target.value ? parseInt(e.target.value) : null)}
+            >
+              <option value="">Todos</option>
+              {availableYears.map(anio => (
+              <option key={anio.anio} value={anio.anio}>{anio.anio}</option>
+              ))}
+            </select>
+          </label>
         </div>
-        <button className={styles.clearButton} onClick={clearSearch}>Limpiar filtros</button>
+
+        <button className={styles.clearButton} onClick={clearSearch}>
+          <Icon name="erase" fill /> Limpiar filtros
+        </button>
       </div>
 
-      {searchFilters.colegio_id && (
-        <div className={styles.titleRow}>
+      <div className={styles.gridArea}>
+        {searchFilters.colegio_id && (
+          <div className={styles.titleRow}>
             <h1>Aportes del colegio: {colegios[searchFilters.colegio_id]}</h1>
-        </div>
+          </div>
         )}
-
         {currentUser?.role === 1 && (
-        <button onClick={handleSaveChanges} className={styles.saveButton}>
-          Guardar cambios
-        </button>
-      )}
+          <button onClick={handleSaveChanges} className={styles.saveButton}>
+            <Icon name="save" fill /> Guardar cambios
+          </button>
+        )}
+      </div>
+
+      {/* Tabla de aportes (igual que antes) */}
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead className={styles.tableHeader}>
             <tr>
               <th className={styles.sticky}>Nombre</th>
               <th className={styles.stickySecond}>Apellido</th>
-              <th>CI</th>
+              <th className={styles.stickyThird}>CI</th>
               {meses.map(mes => <th key={mes}>{mes}</th>)}
               <th>TOTAL</th>
             </tr>
@@ -217,16 +253,11 @@ export default function Aportes() {
                           <td key={idx} className={styles.tableContent}>
                             {currentUser?.role === 1 ? (
                               <input
-                                id="monto"
+                                id={aporte.id}
                                 type="number"
                                 className={styles.inputValue}
-                                value={
-                                  editedAportes[aporte.id]?.monto ??
-                                  aporte.monto.toFixed(2)
-                                }
-                                onChange={(e) =>
-                                  handleEditAporte(aporte.id, member.id ,idx + 1, e.target.value)
-                                }
+                                value={editedAportes[aporte.id]?.monto ?? aporte.monto.toFixed(2)}
+                                onChange={(e) => handleEditAporte(aporte.id, member.id, idx + 1, e.target.value)}
                               />
                             ) : (
                               aporte.monto.toFixed(2)

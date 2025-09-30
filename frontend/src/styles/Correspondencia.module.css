@@ -50,6 +50,10 @@
   font-size: 1rem;
   cursor: pointer;
   transition: 0.3s;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
 }
 
 .button:hover {

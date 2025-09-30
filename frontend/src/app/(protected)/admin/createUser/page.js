@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { authApi } from "@/config/api/apiAuth"
 import styles from '@/styles/CreateUser.module.css'
+import Icon from "@/app/components/UI/Icons"
 
 export default function CreateUser(){
     const [role, setRole] = useState(2) 
@@ -92,7 +93,7 @@ export default function CreateUser(){
                     </div>
                 </div>
 
-                <button type='submit' className={styles.button} disabled={loading}>{loading ? "Creando..." : "Crear usuario"}</button>
+                <button type='submit' className={styles.button} disabled={loading}><Icon name="save" fill/> {loading ? "Creando..." : "Crear usuario"}</button>
                 {message && <p>{message}</p>}
             </form>
         </div>

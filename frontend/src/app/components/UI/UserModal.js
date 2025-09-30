@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import styles from '@/styles/UserModal.module.css'
+import Icon from "./Icons"
 
 export default function UserModal({ user, isOpen, onClose, onSave, onDelete }) {
   const [formData, setFormData] = useState({
@@ -81,11 +82,13 @@ export default function UserModal({ user, isOpen, onClose, onSave, onDelete }) {
             Activo
           </label>
           <div className={styles.actions}>
-            <button type="submit" className={styles.saveBtn}>Guardar</button>
+            <button type="submit" className={styles.saveBtn}><Icon name="save" fill/> Guardar</button>
             <button type="button" className={styles.deleteBtn} onClick={() => onDelete(user.uid)}>
+              <Icon name="delete" fill/>
               Eliminar
             </button>
             <button type="button" className={styles.cancelBtn} onClick={onClose}>
+              <Icon name="cancel" fill/>
               Cancelar
             </button>
           </div>

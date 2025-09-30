@@ -55,6 +55,9 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 .deleteBtn {
@@ -64,6 +67,9 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 .cancelBtn {
@@ -73,6 +79,9 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 @keyframes fadeIn {

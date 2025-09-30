@@ -1,117 +1,340 @@
-.container{
-    margin: 0;
-    padding: 0;
+.container {
+  margin: 0;
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  min-height: 95vh;
 }
 
+/* Search Section */
 .searchContainer {
-  margin-bottom: 20px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  border: 1px solid #e5e7eb;
+  transition: box-shadow 0.3s ease;
+}
+
+.searchContainer:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .searchGroup {
   display: flex;
-  gap: 15px;
-  align-items: end;
+  gap: 16px;
+  align-items: flex-end;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  flex: 1;
 }
 
 .searchLabel {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   font-size: 14px;
-  font-weight: 500;
-  color: #495057;
+  font-weight: 600;
+  color: #374151;
 }
 
-.searchInput {
-  padding: 8px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+.searchInput,
+.select {
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
   font-size: 14px;
-  min-width: 150px;
-  transition: border-color 0.2s ease;
+  min-width: 180px;
+  transition: all 0.2s ease;
+  background: #f9fafb;
 }
 
-.searchInput:focus {
+.searchInput:hover,
+.select:hover {
+  border-color: #cbd5e1;
+  background: white;
+}
+
+.searchInput:focus,
+.select:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* Buttons */
 .clearButton {
-  background-color: #6c757d;
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 600;
   height: fit-content;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .clearButton:hover {
-  background-color: #5a6268;
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.resultsInfo {
-  font-size: 12px;
-  color: #6c757d;
-  font-style: italic;
+.clearButton:active {
+  transform: translateY(0);
 }
 
-.tableWrapper{
-    width: 180vh;
-    max-height: 70vh; /* Máximo alto de la tabla, ajustable según tu diseño */
-    overflow-x: auto;  /* Scroll horizontal si la tabla es muy ancha */
-    overflow-y: auto;  /* Scroll vertical si hay muchos registros */
-    margin: 1rem 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 15px 35px;
+.saveButton {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  width: fit-content;
+  height: fit-content;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
 }
 
-.table{
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 900px;
+.saveButton:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.saveButton:active {
+  transform: translateY(0);
+}
+
+/* Grid Area */
+.gridArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 8px;
+}
+
+.titleRow h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Table Wrapper */
+.tableWrapper {
+  width: 100%;
+  max-height: 70vh;
+  overflow-x: auto;
+  overflow-y: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+/* Custom Scrollbar */
+.tableWrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .tableHeader {
-    background-color: #f8f9fa;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.tableHeader th{
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #495057;
-    border-bottom: 2px solid #dee2e6;
+.tableHeader th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 700;
+  color: #1f2937;
+  border-bottom: 2px solid #e5e7eb;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
-.tableBody{
-    padding: 1rem;
-    border-bottom: 1px solid #dee2e6;
-    color: #212529;
+.sticky {
+  position: sticky;
+  left: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  z-index: 11;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
 }
 
-.tableRow:hover{
-    background-color: #f8f9fa;
+.stickySecond {
+  position: sticky;
+  left: 75px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  z-index: 11;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
 }
 
-.tableContent{
-    width: fit-content;
-    padding: 15px 10px;
+.stickyThird{
+  position: sticky;
+  left: 170px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  z-index: 11;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
 }
 
-.inputValue{
-    width: 60px;
+/* Table Body */
+.tableBody tr {
+  transition: all 0.2s ease;
+}
+
+.tableRow {
+  background: white;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tableRow:nth-child(even) {
+  background: #fafbfc;
+}
+
+.tableRow:hover {
+  background: linear-gradient(90deg, #eff6ff 0%, #dbeafe 100%);
+  transform: scale(1.001);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.tableContent {
+  padding: 14px 16px;
+  color: #374151;
+  font-size: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  white-space: nowrap;
+}
+
+.tableRow:hover .tableContent {
+  color: #1f2937;
+}
+
+/* Sticky columns in body */
+.tableRow td:first-child {
+  position: sticky;
+  left: 0;
+  background: inherit;
+  z-index: 9;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.03);
+}
+
+.tableRow td:nth-child(2) {
+  position: sticky;
+  left: 75px;
+  background: inherit;
+  z-index: 9;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.03);
+}
+
+.tableRow td:nth-child(3){
+  position: sticky;
+  left: 170px;
+  background-color: inherit;
+  z-index: 9;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.03);
 }
 
 
+/* Input Value */
+.inputValue {
+  width: 80px;
+  padding: 6px 10px;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+  transition: all 0.2s ease;
+  background: #f9fafb;
+}
+
+.inputValue:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Total Cell */
+.totalCell {
+  font-weight: 700;
+  color: #059669;
+  background: #f0fdf4;
+  padding: 14px 16px;
+  border-left: 3px solid #10b981;
+  font-size: 15px;
+}
+
+/* Empty State */
+.tableBody td[colspan] {
+  text-align: center;
+  padding: 48px;
+  color: #6b7280;
+  font-size: 15px;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .searchContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .gridArea {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .tableWrapper {
+    width: 100%;
+  }
+}

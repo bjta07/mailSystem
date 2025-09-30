@@ -47,6 +47,9 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
 .editButton:hover {
@@ -156,6 +159,9 @@
   font-size: 14px;
   height: fit-content;
   transition: background-color 0.2s ease;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 .clearButton:hover {

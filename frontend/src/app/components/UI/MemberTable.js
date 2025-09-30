@@ -5,14 +5,16 @@ import { useAuth } from "@/config/contexts/AuthContext"
 import MemberModal from "./MemberModal"
 import AportesViewModal from "./VerAportesModal"
 import RegistrarAporteModal from "./AportesModal"
-import styles from "@/styles/MemberTable.module.css"
 import Icon from "./Icons"
+import BulkUploadModal from "./SubirAportesModal"
+import styles from "@/styles/MemberTable.module.css"
 
 export default function MemberTable(){
     const [members, setMembers] = useState([])
     const [loading, setLoading] = useState(true)
     const [isRegistrarModalOpen, setIsRegistrarModalOpen] = useState(false)
     const [isVerAportesModalOpen, setIsVerAportesModalOpen] = useState(false)
+    const [isUploadFilesModalOpen, setIsUploadFilesModalOpen] = useState(false)
 
     const [error, setError] = useState(null)
     const [selectedMember, setSelectedMember] = useState(null)
@@ -111,6 +113,10 @@ export default function MemberTable(){
         }, 100)
     }
 
+    const handleColseUploadModal = () => {
+        setIsUploadFilesModalOpen(false)
+    }
+
     const handleCloseEditModal = () => {
         setIsModalOpen(false)
         setTimeout(() => {
@@ -146,6 +152,10 @@ export default function MemberTable(){
         
         setSelectedMember(member)
         setIsRegistrarModalOpen(true)
+    }
+
+    const handleOpenFilesUpload = () => {
+        setIsUploadFilesModalOpen(true)
     }
 
     useEffect(() => {
@@ -234,10 +244,11 @@ export default function MemberTable(){
                                 </optgroup>
                             </select>
                     </label>
-                    <button onClick={clearSearch} className={styles.clearButton}>Limpiar filtros</button>
+                    <button onClick={clearSearch} className={styles.clearButton}><Icon name="erase" fill/>Limpiar filtros</button>
                 </div>
                 <div className={styles.resultsInfo}>
-                    Mostrando {filteredAndSortedMembers.length} de {members.length} afiliados
+                    <p>Mostrando {filteredAndSortedMembers.length} de {members.length} afiliados</p>
+                    <button className={styles.uploadButton} onClick={() => handleOpenFilesUpload()}><Icon name="upload" fill/> Subir Aportes desde archivo</button>
                 </div>
             </div>
 
@@ -311,6 +322,11 @@ export default function MemberTable(){
                 member={selectedMember}
                 isOpen={isVerAportesModalOpen}
                 onClose={handleCloseVerAportesModal}
+            />
+
+            <BulkUploadModal
+                isOpen={isUploadFilesModalOpen}
+                onClose={handleColseUploadModal}
             />
         </div>
     )

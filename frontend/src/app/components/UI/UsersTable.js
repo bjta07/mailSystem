@@ -4,6 +4,7 @@ import { authApi } from '@/config/api/apiAuth'
 import { useAuth } from '@/config/contexts/AuthContext'
 import styles from '@/styles/UsersTable.module.css'
 import UserModal from './UserModal'
+import Icon from './Icons'
 
 export default function UsersTable() {
   const [users, setUsers] = useState([])
@@ -146,6 +147,7 @@ export default function UsersTable() {
                     onClick={() => handleEditClick(user)}
                     className={styles.editButton}
                   >
+                    <Icon name="edit" fill/>
                     Editar
                   </button>
                 </td>

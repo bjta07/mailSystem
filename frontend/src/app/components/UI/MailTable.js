@@ -4,6 +4,7 @@ import { mailApi } from '@/config/api/apiAuth'
 import { useAuth } from '@/config/contexts/AuthContext'
 import styles from '@/styles/MailTable.module.css'
 import MailModal from './MailModal'
+import Icon from './Icons'
 
 export default function MailTable() {
     const [correspondences, setCorrespondences] = useState([])
@@ -200,6 +201,7 @@ export default function MailTable() {
                         onClick={clearSearch}
                         className={styles.clearButton}
                     >
+                        <Icon name="erase" fill/>
                         Limpiar Filtros
                     </button>
                 </div>
@@ -240,6 +242,7 @@ export default function MailTable() {
                                             onClick={() => handleEditClick(mail)}
                                             className={styles.editButton}
                                         >
+                                            <Icon name="edit" fill/>
                                             Editar
                                         </button>
                                     )}

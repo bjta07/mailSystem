@@ -1,8 +1,9 @@
 'use client'
 import { useState } from 'react';
 import { useAuth } from '@/config/contexts/AuthContext';
-import styles from '@/styles/Profile.module.css';
 import { authApi } from '@/config/api/apiAuth';
+import Icon from './Icons';
+import styles from '@/styles/Profile.module.css';
 
 export default function Profile() {
     const { user, updateUser } = useAuth();
@@ -136,6 +137,7 @@ export default function Profile() {
                     </div>
                     <div className={styles.buttonGroup}>
                         <button type="submit" className={styles.saveButton}>
+                            <Icon name="save" fill/>
                             Guardar Cambios
                         </button>
                         <button
@@ -143,6 +145,7 @@ export default function Profile() {
                             onClick={() => setIsEditing(false)}
                             className={styles.cancelButton}
                         >
+                            <Icon name="cancel" fill/>
                             Cancelar
                         </button>
                     </div>
@@ -152,6 +155,7 @@ export default function Profile() {
                     onClick={() => setIsEditing(true)}
                     className={styles.editButton}
                 >
+                    <Icon name="edit" fill/>
                     Editar Perfil
                 </button>
             )}
@@ -191,6 +195,7 @@ export default function Profile() {
                         </div>
                         <div className={styles.buttonGroup}>
                             <button type="submit" className={styles.saveButton}>
+                                <Icon name="savePassword" fill/>
                                 Cambiar Contraseña
                             </button>
                             <button
@@ -205,6 +210,7 @@ export default function Profile() {
                                 }}
                                 className={styles.cancelButton}
                             >
+                                <Icon name="cancel" fill/>
                                 Cancelar
                             </button>
                         </div>
@@ -214,6 +220,7 @@ export default function Profile() {
                         onClick={() => setIsChangingPassword(true)}
                         className={styles.passwordButton}
                     >
+                        <Icon name="editPassword" fill/>
                         Cambiar Contraseña
                     </button>
                 )}

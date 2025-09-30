@@ -58,8 +58,7 @@ const findAllMembers = async () => {
 const findByCi = async(ci) => {
     const query = {
         text: `
-            SELECT 
-            ci, nombres, apellidos, colegio_id
+            SELECT *
             FROM afiliados
             WHERE ci = $1
         `,
