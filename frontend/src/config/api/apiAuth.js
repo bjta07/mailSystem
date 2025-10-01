@@ -368,13 +368,6 @@ export const aportesApi = {
         });
     },
 
-    getAportesByFechaRegistro: async (fecha_inicio, fecha_fin, page = 1, limit = 10) => {
-        return fetchApi(
-            `aportes/fecha?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}&page=${page}&limit=${limit}`,
-            { method: 'GET' }
-        );
-    },
-
     removeAporte: async (aporteId) => {
         return fetchApi(`aportes/${aporteId}`, {
             method: 'DELETE'
@@ -386,10 +379,11 @@ export const aportesApi = {
     },
     
     getYearsAndAportes: async (anio) => {
-        const url = anio 
-            ? `aportes/anios-aportes?anio=${anio}`
-            : `aportes/anios-aportes`
+    const url = anio 
+        ? `aportes/anios-aportes?anio=${anio}`
+        : `aportes/anios-aportes`
 
-        return fetchApi(url, { method: 'GET' })
-    }
+    return fetchApi(url, { method: 'GET' })
+}
+
 }

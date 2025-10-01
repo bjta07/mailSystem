@@ -93,39 +93,43 @@ export default function Aportes() {
   }, [])
 
   // Cargar aportes filtrados por año y miembro
-  // Cargar aportes filtrados por año y miembro
-  useEffect(() => {
-    const fetchAportes = async () => {
-      try {
-        const aportesPorMiembro = {}
-        let allAportesForSelectedYear = []
+  useEffect(() => {
+  const fetchAportesForYear = async () => {
+    if (!selectedYear) {
+      setAportaciones({});
+      return;
+    }
 
-        if (selectedYear) {
-          // Obtener TODOS los aportes del año específico, UNA SOLA VEZ
-          const response = await aportesApi.getYearsAndAportes(selectedYear)
-          allAportesForSelectedYear = response.data.aportes || []
-        }
+    try {
+      // **ESTA LÍNEA ES CRÍTICA:** Accede a .data.aportes.data
+      const response = await aportesApi.getYearsAndAportes(selectedYear);
+      const allAportesForSelectedYear = response?.data?.aportes?.data || [];
 
-        for (const member of members) {
-          let memberAportes
+      // 2. Procesar y agrupar los aportes por ID de miembro
+      const aportesPorMiembro = {};
+      
+      // Inicializar todos los miembros con un array vacío de aportes
+      for (const member of members) {
+        aportesPorMiembro[member.id] = [];
+      }
 
-          if (selectedYear) {
-            // Filtrar los aportes ya obtenidos por el ID del miembro
-            memberAportes = allAportesForSelectedYear.filter(a => a.afiliado_id === member.id)
-          } else {
-            // Obtener todos los aportes para ese miembro (si no hay año seleccionado)
-            const resp = await aportesApi.getAportesByAfiliado(member.id, { page: 1, limit: 100 })
-            memberAportes = resp.data
-          }
-          aportesPorMiembro[member.id] = memberAportes
-        }
-        setAportaciones(aportesPorMiembro)
-      } catch (error) {
-        console.error("Error al obtener aportes:", error)
-      }
-    }
-    if (members.length > 0) fetchAportes()
-  }, [members, selectedYear])
+      // Asignar los aportes a sus respectivos miembros
+      for (const aporte of allAportesForSelectedYear) {
+        if (aportesPorMiembro[aporte.afiliado_id]) {
+          aportesPorMiembro[aporte.afiliado_id].push(aporte);
+        }
+      }
+      console.log("Aportes recibidos del API:", allAportesForSelectedYear);
+console.log("Miembros cargados:", members.map(m => m.id));
+
+      setAportaciones(aportesPorMiembro);
+    } catch (error) {
+      console.error("Error al obtener aportes por año:", error);
+    }
+  };
+
+  if (members.length > 0) fetchAportesForYear();
+}, [members, selectedYear]);
 
   const handleEditAporte = (aporteId, memberId, mes, value) => {
     setEditedAportes(prev => ({
@@ -195,7 +199,7 @@ export default function Aportes() {
             >
               <option value="">Todos</option>
               {availableYears.map(anio => (
-              <option key={anio.anio} value={anio.anio}>{anio.anio}</option>
+              <option key={anio} value={anio}>{anio}</option>
               ))}
             </select>
           </label>

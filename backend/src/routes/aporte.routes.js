@@ -11,10 +11,8 @@ router.post('/bulk-upload', verifyActiveUserorAdmin, upload.single("file"), Apor
 
 router.get('/', verifyActiveUserorAdmin, AportesController.getAll)
 router.get('/afiliado/:id',verifyActiveUserorAdmin, AportesController.getByAfiliado)
-router.get('/:id',verifyActiveUserorAdmin, AportesController.getByFechaRegistro)
-router.get('/anio/:anio', verifyActiveUserorAdmin, AportesController.getByAnio)
-router.get('/anios-aportes', verifyActiveUserorAdmin, AportesController.getYearsAndAportes
-)
+router.get('/anios-aportes', verifyActiveUserorAdmin, AportesController.getYearsAndAportes)
+
 
 router.put('/:id', verifyActiveAdmin, AportesController.update)
 router.delete('/:id',verifyActiveAdmin, AportesController.remove)

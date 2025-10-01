@@ -103,22 +103,6 @@ async update(req, res) {
   }
 },
 
-  // Obtener aportes por rango de fecha de registro
-  async getByFechaRegistro(req, res) {
-    try {
-      const { fecha_inicio, fecha_fin } = req.query
-      if (!fecha_inicio || !fecha_fin) {
-        return res.status(400).json({ ok: false, error: "Debe enviar fecha_inicio y fecha_fin" })
-      }
-      const page = parseInt(req.query.page) || 1
-      const limit = parseInt(req.query.limit) || 10
-      const aportes = await AporteModel.findByFechaRegistro({ fecha_inicio, fecha_fin, page, limit })
-      return res.json({ ok: true, data: aportes })
-    } catch (error) {
-      console.error("Error en AportesController.getByFechaRegistro:", error)
-      return res.status(500).json({ ok: false, error: "Error al filtrar aportes por fecha" })
-    }
-  },
 
   // Obtener aportes por año
 async getByAnio(req, res) {
@@ -159,7 +143,7 @@ async getYearsAndAportes(req, res) {
 
     let aportes = [];
     if (anio) {
-      aportes = await AporteModel.findByAnio(anio);
+      aportes = await AporteModel.findByAnio({ anio });
     }
 
     return res.json({
@@ -174,8 +158,6 @@ async getYearsAndAportes(req, res) {
     return res.status(500).json({ ok: false, error: "Error al obtener años y aportes" });
   }
 },
-
-
 
   // Eliminar aporte por ID
   async remove(req, res) {

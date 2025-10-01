@@ -178,21 +178,22 @@ const findByFechaRegistro = async ({ fecha_inicio, fecha_fin, page = 1, limit = 
 };
 
 // Obtener aportes por año con paginación
-const findByAnio = async ({ anio, page = 1, limit = 10 }) => {
-  const offset = (page - 1) * limit;
-
+const findByAnio = async ({ anio }) => {
+  if (!anio || isNaN(parseInt(anio))) {
+    throw new Error(`Parámetro anio inválido: ${anio}`);
+  }
   // 1️⃣ Contar total
   const countQuery = {
     text: `SELECT COUNT(*) FROM aportes WHERE anio = $1`,
-    values: [parseInt(anio)],
+    values: [parseInt(anio, 10)],
   };
   const countResult = await db.query(countQuery);
   const total = parseInt(countResult.rows[0].count, 10);
 
-  // 2️⃣ Obtener registros con JOIN
+  // 2️⃣ Obtener registros
   const query = {
     text: `
-      SELECT a.id, a.anio, a.mes, a.monto, a.fecha_registro,
+      SELECT a.id, a.afiliado_id, a.anio, a.mes, a.monto, a.fecha_registro, 
              af.nombres, af.apellidos, af.ci,
              c.colegio
       FROM aportes a
@@ -200,9 +201,8 @@ const findByAnio = async ({ anio, page = 1, limit = 10 }) => {
       JOIN colegios c ON af.colegio_id = c.id
       WHERE a.anio = $1
       ORDER BY a.mes DESC, a.fecha_registro DESC
-      LIMIT $2 OFFSET $3
     `,
-    values: [parseInt(anio), limit, offset],
+    values: [parseInt(anio, 10)],
   };
 
   const { rows } = await db.query(query);
@@ -215,11 +215,12 @@ const findByAnio = async ({ anio, page = 1, limit = 10 }) => {
   return {
     data,
     total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
+    page: 1,
+    limit: total,
+    totalPages: 1,
   };
 };
+
 
 // Obtener todos los años distintos registrados en aportes
 const findAllYears = async () => {
